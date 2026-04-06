@@ -40,31 +40,57 @@ function AppContent() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      if (session) {
-        seedIfEmpty().then(() => {
-          DB.preloadAll().then(() => setLoading(false));
-        });
-      } else {
-        setLoading(false);
-      }
-    });
+    // Fail-safe to force dashboard render after 5 seconds
+    const fallbackTimer = setTimeout(() => {
+      console.warn('Forçando carregamento (Timeout)');
+      setLoading(false);
+    }, 5000);
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      setSession(session);
-      if (session) {
-        setLoading(true);
+    const initData = async (sess) => {
+      setSession(sess);
+      if (!sess) {
+        setLoading(false);
+        return;
+      }
+      try {
+        console.log('Iniciando carga de dados...');
         await seedIfEmpty();
+        console.log('Dados iniciais OK, pré-carregando...');
         await DB.preloadAll();
+        console.log('Tudo pronto!');
+      } catch(e) {
+        console.error('Erro crítico na inicialização:', e);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    let sessionHandled = false;
+
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!sessionHandled) {
+        sessionHandled = true;
+        initData(session);
+      }
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (event === 'SIGNED_IN' || (!sessionHandled && session)) {
+        sessionHandled = true;
+        initData(session);
+      } else if (!session) {
+        setSession(null);
         setLoading(false);
       }
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      clearTimeout(fallbackTimer);
+      subscription.unsubscribe();
+    };
   }, []);
 
-  if (loading) return <div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--navy)', color: 'var(--teal)' }}>Inicializando Gestão Inteligente...</div>;
+  if (loading) return <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'var(--navy)', color: 'var(--teal)' }}><div className="spin" style={{ width: 30, height: 30, border: '3px solid var(--teal)', borderTopColor: 'transparent', borderRadius: '50%', marginBottom: 20 }}></div>Inicializando Gestão Inteligente...</div>;
 
   if (!session) return <Login />;
 
