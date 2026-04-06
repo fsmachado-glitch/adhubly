@@ -15,7 +15,7 @@ export function useData(table, initialData = []) {
   async function fetchData() {
     setLoading(true);
     try {
-      const result = await DB.getArr(table);
+      const result = await DB.fetchArr(table);
       setData(result);
     } catch (err) {
       setError(err);

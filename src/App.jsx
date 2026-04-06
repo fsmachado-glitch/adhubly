@@ -6,9 +6,10 @@ import Sidebar from './components/Sidebar';
 import Login from './pages/Login';
 import { supabase } from './lib/supabase';
 import { seedIfEmpty } from './lib/seedData';
+import DB from './lib/db';
 import './index.css';
 
-// Gestor pages
+// Gestor pages // ... (leaving other imports intact)
 import Dashboard from './pages/gestor/Dashboard';
 import MapaDores from './pages/gestor/MapaDores';
 import Colaboradores from './pages/gestor/Colaboradores';
@@ -39,22 +40,31 @@ function AppContent() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Check session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
-      if (session) seedIfEmpty(); // Seed after login if empty
-      setLoading(false);
+      if (session) {
+        seedIfEmpty().then(() => {
+          DB.preloadAll().then(() => setLoading(false));
+        });
+      } else {
+        setLoading(false);
+      }
     });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
       setSession(session);
-      if (session) seedIfEmpty();
+      if (session) {
+        setLoading(true);
+        await seedIfEmpty();
+        await DB.preloadAll();
+        setLoading(false);
+      }
     });
 
     return () => subscription.unsubscribe();
   }, []);
 
-  if (loading) return null; // Or a splash screen
+  if (loading) return <div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--navy)', color: 'var(--teal)' }}>Inicializando Gestão Inteligente...</div>;
 
   if (!session) return <Login />;
 
