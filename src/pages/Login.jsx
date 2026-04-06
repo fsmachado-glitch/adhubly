@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { useToast } from '../components/Toast';
-import { Brain, Lock, Mail, RefreshCw } from 'lucide-react';
+import { Zap, Lock, Mail, RefreshCw } from 'lucide-react';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -46,7 +46,7 @@ export default function Login() {
       <div className="card" style={{ width: '100%', maxWidth: 400, padding: '2.5rem' }}>
         <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
           <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 60, height: 60, borderRadius: '50%', background: 'rgba(0,212,180,.1)', color: 'var(--teal)', marginBottom: '1rem' }}>
-            <Brain size={32} />
+            <Zap size={32} fill="currentColor" strokeWidth={0} />
           </div>
           <h1 style={{ fontFamily: 'var(--font-h)', fontSize: 24, fontWeight: 800, color: 'var(--navy)', marginBottom: '.25rem' }}>Adhubly</h1>
           <p style={{ fontSize: 13, color: 'var(--gray)' }}>Gestão Empresarial Inteligente</p>

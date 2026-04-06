@@ -78,7 +78,7 @@ export default function Sidebar({ role, isOpen, onClose }) {
       ))}
       <div className="sb-bottom">
         <div className="sb-upgrade">
-          <p>Plataforma <strong style={{ color: 'var(--teal)' }}>Adhubly</strong> · Gestão inteligente de pessoas</p>
+          <p>Plataforma <strong style={{ color: 'var(--teal)', fontFamily: 'var(--font-h)', fontWeight: 800 }}>Adhubly</strong> · Gestão inteligente de pessoas</p>
         </div>
       </div>
     </nav>

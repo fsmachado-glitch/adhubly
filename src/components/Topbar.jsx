@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Bell, Menu, LogOut, ChevronDown } from 'lucide-react';
+import { Bell, Menu, LogOut, Zap } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import DB from '../lib/db';
 import { useToast } from './Toast';
@@ -30,14 +30,10 @@ export default function Topbar({ role, setRole, onMenuToggle }) {
       </button>
 
       <div className="tb-logo" onClick={() => window.location.href = '/'}>
-        <div className="tb-mark">
-          <svg viewBox="0 0 18 18" fill="none" style={{ width: 17, height: 17 }}>
-            <rect x="1" y="10" width="4" height="7" rx="1" fill="#0A0F1E" />
-            <rect x="7" y="6" width="4" height="11" rx="1" fill="#0A0F1E" />
-            <rect x="13" y="2" width="4" height="15" rx="1" fill="#0A0F1E" />
-          </svg>
+        <div className="tb-mark" style={{ background: 'transparent', color: 'var(--teal)' }}>
+          <Zap size={24} fill="currentColor" strokeWidth={0} />
         </div>
-        <span className="tb-name">Ad<span>Hub</span>ly</span>
+        <span className="tb-name" style={{ fontWeight: 800, fontSize: 20 }}>Adhubly</span>
       </div>
 
       <span className="tb-client">{cfg.nome || 'Carregando...'}</span>
