@@ -25,6 +25,10 @@ export default function Login() {
 
   async function handleSignUp(e) {
     e.preventDefault();
+    if (!email || !password) {
+      toast('Por favor, preencha o e-mail e a senha antes de clicar em Criar agora.');
+      return;
+    }
     setLoading(true);
     try {
       const { error } = await supabase.auth.signUp({ email, password });
