@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Bell, Menu, LogOut, Zap } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import DB from '../lib/db';
 import { useToast } from './Toast';
@@ -8,6 +9,16 @@ export default function Topbar({ role, setRole, onMenuToggle }) {
   const toast = useToast();
   const [cfg, setCfg] = useState({});
   const [userEmail, setUserEmail] = useState('');
+  const navigate = useNavigate();
+
+  function handleRoleSwitch(newRole) {
+    setRole(newRole);
+    if (newRole === 'colab') {
+      navigate('/meu-painel');
+    } else {
+      navigate('/');
+    }
+  }
 
   useEffect(() => {
     DB.getConfig().then(setCfg);
@@ -25,7 +36,7 @@ export default function Topbar({ role, setRole, onMenuToggle }) {
 
   return (
     <header className="topbar">
-      <button className="tb-btn" onClick={onMenuToggle} style={{ display: 'none' }} id="menu-btn">
+      <button className="tb-btn mobile-menu-btn" onClick={onMenuToggle}>
         <Menu size={16} />
       </button>
 
@@ -40,8 +51,8 @@ export default function Topbar({ role, setRole, onMenuToggle }) {
 
       <div className="tb-right">
         <div className="role-toggle">
-          <button className={`role-btn ${role === 'gestor' ? 'active' : ''}`} onClick={() => setRole('gestor')}>Gestor</button>
-          <button className={`role-btn ${role === 'colab' ? 'active' : ''}`} onClick={() => setRole('colab')}>Colaborador</button>
+          <button className={`role-btn ${role === 'gestor' ? 'active' : ''}`} onClick={() => handleRoleSwitch('gestor')}>Gestor</button>
+          <button className={`role-btn ${role === 'colab' ? 'active' : ''}`} onClick={() => handleRoleSwitch('colab')}>Colaborador</button>
         </div>
 
         <button className="tb-btn" onClick={() => toast('Nenhuma notificação nova')}>
